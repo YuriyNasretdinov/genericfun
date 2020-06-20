@@ -1,0 +1,24 @@
+package main
+
+import (
+	"fmt"
+)
+
+func compareStrings(a, b string) bool {
+	return a < b
+}
+
+func main() {
+	fmt.Printf("Hello, comrads max=%v, min=%v!\n", Max(1, 2, 3), Min(4, 2, 3))
+	fmt.Printf("Keys of a map: %+v\n", Keys(map[string]bool{"a": true, "b": false}))
+
+	var slice = []float64{
+		2.1,
+		1.1,
+		3.1,
+	}
+
+	Sort(slice)
+
+	fmt.Printf("Sorted slice: %+v\n", slice)
+}

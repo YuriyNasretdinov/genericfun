@@ -1,0 +1,63 @@
+package main
+
+import "sort"
+
+type Lessable interface {
+	type int, int8, int16, int32, int64,
+		uint, uint8, uint16, uint32, uint64,
+		float32, float64, string
+}
+
+func Max(type T Lessable) (first T, args ...T) T {
+	res := first
+	for _, el := range args {
+		if el > res {
+			res = el
+		}
+	}
+	return res
+}
+
+func Min(type T Lessable) (first T, args ...T) T {
+	res := first
+	for _, el := range args {
+		if el < res {
+			res = el
+		}
+	}
+	return res
+}
+
+func Keys(type K comparable, V interface{}) (m map[K]V) []K {
+	res := make([]K, 0, len(m))
+	for k := range m {
+		res = append(res, k)
+	}
+	return res
+}
+
+type sortable(type T) struct {
+	s    []T
+	less func(T, T) bool
+}
+
+func (s sortable(T)) Len() int {
+	return len(s.s)
+}
+
+func (s sortable(T)) Less(i, j int) bool {
+	return s.less(s.s[i], s.s[j])
+}
+
+func (s sortable(T)) Swap(i, j int) {
+	s.s[i], s.s[j] = s.s[j], s.s[i]
+}
+
+func SortFn(type T) (s []T, less func(T, T) bool) {
+	sort.Sort(sortable(T){s: s, less: less})
+}
+
+func Sort(type T Lessable) (s []T) {
+	SortFn(s, func(a, b T) bool { return a < b })
+}
+
