@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 )
 
-func compareStrings(a, b string) bool {
-	return a < b
-}
-
-func main() {
+func simple() {
 	fmt.Printf("Hello, comrads max=%v, min=%v!\n", Max(1, 2, 3), Min(4, 2, 3))
 	fmt.Printf("Keys of a map: %+v\n", Keys(map[string]bool{"a": true, "b": false}))
 
@@ -21,4 +19,24 @@ func main() {
 	Sort(slice)
 
 	fmt.Printf("Sorted slice: %+v\n", slice)
+}
+
+type Comrad struct {
+	ID            int64  `json:"id"`
+	Surname       string `json:"surname"`
+	Name          string `json:"name"`
+	PaternityName string `json:"paternity_name"`
+}
+
+func main() {
+	d := NewJsonDecoder(Comrad)(os.Stdin)
+
+	comrads, err := d.Slice()
+	if err != nil {
+		log.Fatalf("Could not read comrads: %v", err)
+	}
+
+	for _, c := range comrads {
+		fmt.Printf("Comrad %q: %+v\n", c.Name, c)
+	}
 }

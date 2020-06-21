@@ -1,0 +1,47 @@
+package main
+
+import (
+	"encoding/json"
+	"io"
+)
+
+func JsonUnmarshal(type T) (contents []byte) (T, error) {
+	var res T
+	err := json.Unmarshal(contents, &res)
+	return res, err
+}
+
+type JsonDecoder(type T) struct {
+	d *json.Decoder
+	res T
+}
+
+func NewJsonDecoder(type T) (rd io.Reader) JsonDecoder(T) {
+	return JsonDecoder(T){d: json.NewDecoder(rd)}
+}
+
+func (d JsonDecoder(T)) Decode() (T, error) {
+	err := d.d.Decode(&d.res)
+	if err != nil {
+		var empty T
+		return empty, err
+	}
+	return d.res, nil
+}
+
+func (d JsonDecoder(T)) Slice() ([]T, error) {
+	var results []T
+
+	for {
+		res, err := d.Decode()
+		if err == io.EOF {
+			return results, nil
+		} else if err != nil {
+			return nil, err
+		}
+
+		results = append(results, res)
+	}
+
+	return results, nil
+}
