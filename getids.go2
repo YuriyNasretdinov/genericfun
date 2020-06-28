@@ -1,0 +1,69 @@
+package main
+
+import (
+	"reflect"
+)
+
+type IDGetter interface {
+	GetID() int64
+}
+
+func GetIDsReflect(slice interface{}) []int64 {
+	var res []int64
+
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		panic("Expected slice")
+	}
+
+	for i := 0; i < rv.Len(); i++ {
+		res = append(res, rv.Index(i).Interface().(IDGetter).GetID())
+	}
+
+	return res
+}
+
+func GetIDsGeneric(type T IDGetter) (slice []T) []int64 {
+	var res []int64
+	for _, e := range slice {
+		res = append(res, e.GetID())
+	}
+	return res
+}
+
+var boolType = reflect.TypeOf(true)
+
+func UniqueValuesReflect(slice interface{}) interface{} {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		panic("Expected slice")
+	}
+
+	rt := rv.Type()
+	m := reflect.MakeMap(reflect.MapOf(rt.Elem(), boolType))
+
+	res := reflect.MakeSlice(reflect.SliceOf(rt.Elem()), 0, rv.Cap())
+
+	var zero reflect.Value
+	for i := 0; i < rv.Len(); i++ {
+		el := rv.Index(i)
+		if m.MapIndex(el) == zero {
+			res = reflect.Append(res, el)
+			m.SetMapIndex(el, reflect.ValueOf(true))
+		}
+	}
+
+	return res.Interface()
+}
+
+func UniqueValuesGeneric(type T comparable) (slice []T) []T {
+	m := make(map[T]struct{}, len(slice))
+	res := make([]T, 0, len(slice))
+	for _, el := range slice {
+		if _, ok := m[el]; !ok {
+			res = append(res, el)
+			m[el] = struct{}{}
+		}
+	}
+	return res
+}

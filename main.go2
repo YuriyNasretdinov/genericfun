@@ -28,15 +28,35 @@ type Comrad struct {
 	PaternityName string `json:"paternity_name"`
 }
 
+func (c *Comrad) GetID() int64 {
+	return c.ID
+}
+
 func main() {
-	d := NewJsonDecoder(Comrad)(os.Stdin)
+	d := NewJsonDecoder(*Comrad)(os.Stdin)
 
 	comrads, err := d.Slice()
 	if err != nil {
 		log.Fatalf("Could not read comrads: %v", err)
 	}
 
-	for _, c := range comrads {
-		fmt.Printf("Comrad %q: %+v\n", c.Name, c)
+	fmt.Printf("IDs: %+v\n", GetIDsGeneric(comrads))
+
+	slice := []int64{1, 2, 2, 3, 4, 4, 5}
+
+	fmt.Print("Reflect:\n")
+
+	for _, id := range UniqueValuesReflect(slice).([]int64) {
+		fmt.Printf("%d\n", id)
 	}
+
+	fmt.Print("\nGeneric:\n")
+
+	for _, id := range UniqueValuesGeneric(slice) {
+		fmt.Printf("%d\n", id)
+	}
+
+	// for _, c := range comrads {
+	// fmt.Printf("Comrad %q: %+v\n", c.Name, c)
+	// }
 }

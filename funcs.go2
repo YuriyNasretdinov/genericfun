@@ -60,4 +60,3 @@ func SortFn(type T) (s []T, less func(T, T) bool) {
 func Sort(type T Lessable) (s []T) {
 	SortFn(s, func(a, b T) bool { return a < b })
 }
-
